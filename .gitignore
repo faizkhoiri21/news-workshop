@@ -1,8 +1,7 @@
 # Ignore all __pycache__ directories
-**/__pycache__/*
-
+**/__pycache__/
 # Ignore all .pyc files
 **/*.pyc
 
 # Ignore all Jupyter Notebook checkpoint folders
-**/.ipynb_checkpoints/*
+**/.ipynb_checkpoints/
