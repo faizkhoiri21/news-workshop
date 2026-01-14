@@ -1,117 +1,83 @@
-# Workshop Project: Scraping Online News
+# Workshop Project: Online News Scraping
 
-Proyek ini bertujuan untuk melakukan web scraping pada portal berita online dan mengolah data yang diperoleh melalui pipeline *Medallion Architecture* untuk mendapatkan dataset yang siap digunakan untuk analitik.
+Web scraping pipeline for online news portals using Medallion Architecture (Bronze → Silver → Gold) to produce analytics-ready datasets.
 
-## Table of Contents
+## Quick Start
 
-- [Cara Menjalankan Proyek](#cara-menjalankan-proyek)
-  - [Persiapan Lingkungan](#persiapan-lingkungan)
-  - [Jalankan Pipeline End-to-End](#jalankan-pipeline-end-to-end)
-- [Asumsi](#asumsi)
-- [Keterbatasan](#keterbatasan)
-- [Sumber](#sumber)
-- [Tip](#tip)
-
-## Cara Menjalankan Proyek
-
-### Persiapan Lingkungan
-
-#### Install dependencies
+### Installation
 
 ```bash
 pip install -r requirements.txt
 ```
 
-#### atau
+Or using Make:
 
 ```bash
 make install
 ```
 
-#### Unduh data NLTK
+### Download NLTK Data
 
-Beberapa tahap pipeline (misal pembuangan stopwords dan tokenisasi) membutuhkan dataset tambahan dari NLTK.
-Setelah meng-install dependencies, jalankan sekali per environment:
+Required for stopword removal and tokenization (run once per environment):
 
 ```bash
 python -c "import nltk; nltk.download('punkt'); nltk.download('punkt_tab'); nltk.download('stopwords')"
 ```
 
-### Jalankan Pipeline End-to-End
+### Run Pipeline
 
-Proyek ini menggunakan pipeline Medallion Architecture (Bronze → Silver → Gold). Jalankan seluruh pipeline:
+Execute the complete pipeline:
 
 ```bash
 make all
 ```
 
-Atau step-by-step:
+Or run step-by-step:
 
 ```bash
-make scrape  # hanya scraping
-make silver  # transform bronze → silver
-make gold    # transform silver → gold
+make scrape  # Bronze: raw scraping
+make silver  # Silver: cleaning & normalization
+make gold    # Gold: analytics-ready tables
 ```
 
-#### Output utama:
+## Output Structure
 
-- `data/`
-  - `bronze/` – hasil raw scraping
-  - `silver/` – data sudah dibersihkan & dinormalisasi
-  - `gold/` – tabel analytics-ready
+```
+data/
+├── bronze/   # Raw scraped data
+├── silver/   # Cleaned & normalized data
+└── gold/     # Analytics-ready tables
 
-#### Notebook analitik:
-
-```bash
-notebooks/01_eda.ipynb
+notebooks/
+└── 01_eda.ipynb   # Exploratory data analysis
 ```
 
----
+## Key Assumptions
 
-## Asumsi
+- **Crawling Ethics**: News portals allow light crawling according to robots.txt
+- **Timezone**: All `published_at` stored in UTC ISO-8601 format
+- **Deduplication**: Articles identified by `url` or `article_id`
+- **Scraping Rate**: 1.2s delay per article, max 3 retries
 
-- **Akses & Etika**: Portal berita yang di-scrape mengizinkan crawling ringan sesuai robots.txt.
-- **Zona Waktu**: Semua `published_at` disimpan dalam format UTC ISO-8601 (`YYYY-MM-DDTHH:MM:SS+00:00`).
-- **Dedup**: Duplikat artikel diidentifikasi via `url` atau `article_id`.
-- **Performa Scraping**: Delay 1,2 detik per artikel; retry maks 3x.
+## Limitations
 
----
+- HTML structure changes may require selector updates
+- Some articles may have null `author` or `category` fields
+- Limited to 20 index pages per source
+- Basic topic analysis (unigram/bigram only)
 
-## Keterbatasan
+## Data Sources
 
-- Struktur HTML situs dapat berubah → selector di scraper mungkin perlu disesuaikan ulang.
-- Tidak semua artikel memiliki `author` atau `category`, sehingga kolom ini bisa `null`.
-- Hanya meng-crawl 20 halaman index; dataset bukan representasi penuh seluruh portal.
-- Analisis topik bersifat ringan (hanya unigram/bigram), belum menggunakan NLP lanjutan.
+**News Portals:**
+- https://tempo.co/indeks/
+- https://news.detik.com/indeks/
 
----
+**Architecture Reference:**
+- [Medallion Architecture](https://www.databricks.com/glossary/medallion-architecture)
 
-## Sumber
+## Analytics
 
-- **Portal Berita**:
-  - https://tempo.co/indeks/
-  - https://news.detik.com/indeks/
-
-- **Library Python**:
-  - [requests](https://docs.python-requests.org/)
-  - [beautifulsoup4](https://www.crummy.com/software/BeautifulSoup/)
-  - [pandas](https://pandas.pydata.org/docs/)
-  - [numpy](https://numpy.org/doc/stable/)
-  - [pyarrow](https://arrow.apache.org/docs/python/)
-  - [matplotlib](https://matplotlib.org/stable/contents.html)
-  - [tqdm](https://tqdm.github.io/)
-  - [python-slugify](https://github.com/un33k/python-slugify)
-  - [dateparser](https://dateparser.readthedocs.io/en/latest/)
-  - [lxml](https://lxml.de/)
-  - [fastparquet](https://fastparquet.readthedocs.io/en/latest/)
-  - [nltk](https://www.nltk.org/)
-  - [seaborn](https://seaborn.pydata.org/)
-
-- **Referensi Arsitektur**:
-  - [Medallion Architecture](https://www.databricks.com/glossary/medallion-architecture)
-
----
-
-## Tip
-
-📄 Lihat `reports/analytics_summary.md` untuk ringkasan insight dan rekomendasi bisnis dari data Gold.
+View insights and business recommendations in:
+```
+reports/analytics_summary.md
+```
