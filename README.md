@@ -1,5 +1,7 @@
 # Workshop Project: Online News Scraping
 
+![News Portals Crop](https://github.com/user-attachments/assets/7dc088da-9ac5-4fae-b6ef-c4969d0fb07d)
+
 Web scraping pipeline for online news portals using Medallion Architecture (Bronze → Silver → Gold) to produce analytics-ready datasets.
 
 ## Quick Start
